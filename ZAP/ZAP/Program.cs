@@ -14,10 +14,11 @@ namespace ZAP
     {
         static void Main(string[] args)
         {
-            Test();
+            Test(ZFileMode.Extract);
+            Test(ZFileMode.Build);
         }
 
-        static void Test()
+        static void Test(ZFileMode fileMode)
         {
             if (!Directory.Exists("out"))
                 Directory.CreateDirectory("out");
@@ -30,9 +31,12 @@ namespace ZAP
 
                 if (reader.Name == "File")
                 {
-                    ZFile file = new ZFile(ZFileMode.Extract, ref reader);
+                    ZFile file = new ZFile(fileMode, ref reader);
 
-                    file.ExtractResources();
+                    if (fileMode == ZFileMode.Extract)
+                        file.ExtractResources();
+                    else
+                        file.BuildResources();
                 }
 
                 //Console.WriteLine(reader.Name);

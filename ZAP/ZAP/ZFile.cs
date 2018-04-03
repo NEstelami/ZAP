@@ -66,5 +66,25 @@ namespace ZAP
                 res.Save();
             }
         }
+
+        public void BuildResources()
+        {
+            int size = 0;
+
+            foreach (ZTexture res in resources)
+                size += res.GetRawDataSize();
+
+            byte[] file = new byte[size];
+            int fileIndex = 0;
+
+            foreach (ZTexture res in resources)
+            {
+                Console.WriteLine("Building resource " + res.GetName());
+                Array.Copy(res.GetRawData(), 0, file, fileIndex, res.GetRawData().Length);
+                fileIndex += res.GetRawData().Length;
+            }
+
+            File.WriteAllBytes("build.bin", file);
+        }
     }
 }
