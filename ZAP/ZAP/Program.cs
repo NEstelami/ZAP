@@ -20,9 +20,6 @@ namespace ZAP
 
         static void Test(ZFileMode fileMode)
         {
-            if (!Directory.Exists("out"))
-                Directory.CreateDirectory("out");
-
             XmlReader reader = XmlReader.Create("icon_item_static.xml");
 
             while (!reader.EOF)

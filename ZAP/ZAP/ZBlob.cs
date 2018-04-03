@@ -25,16 +25,16 @@ namespace ZAP
         }
 
         // BUILD MODE
-        public ZBlob(ref XmlReader reader)
+        public ZBlob(ref XmlReader reader, string inFolder)
         {
             name = reader.GetAttribute("Name");
 
-            rawData = File.ReadAllBytes("out\\" + name + ".bin");
+            rawData = File.ReadAllBytes(inFolder + "/" + name + ".bin");
         }
         
-        public override void Save()
+        public override void Save(string outFolder)
         {
-            File.WriteAllBytes("out\\" + name + ".bin", rawData);
+            File.WriteAllBytes(outFolder + "/" + name + ".bin", rawData);
         }
     }
 }

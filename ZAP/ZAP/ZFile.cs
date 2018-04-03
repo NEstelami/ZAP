@@ -30,6 +30,8 @@ namespace ZAP
             int startDepth = reader.Depth;
             name = reader.GetAttribute("Name");
 
+            string folderName = Path.GetFileNameWithoutExtension(name);
+
             byte[] rawData = null;
 
             if (mode == ZFileMode.Extract)
@@ -48,7 +50,7 @@ namespace ZAP
                     if (mode == ZFileMode.Extract)
                         tex = new ZTexture(ref reader, rawData, rawDataIndex);
                     else
-                        tex = new ZTexture(ref reader);
+                        tex = new ZTexture(ref reader, folderName);
 
                     resources.Add(tex);
                     rawDataIndex += tex.GetRawDataSize();
@@ -60,7 +62,7 @@ namespace ZAP
                     if (mode == ZFileMode.Extract)
                         blob = new ZBlob(ref reader, rawData, rawDataIndex);
                     else
-                        blob = new ZBlob(ref reader);
+                        blob = new ZBlob(ref reader, folderName);
 
                     resources.Add(blob);
 
@@ -73,10 +75,15 @@ namespace ZAP
 
         public void ExtractResources()
         {
+            string folderName = Path.GetFileNameWithoutExtension(name);
+
+            if (!Directory.Exists(folderName))
+                Directory.CreateDirectory(folderName);
+
             foreach (ZResource res in resources)
             {
                 Console.WriteLine("Saving resource " + res.GetName());
-                res.Save();
+                res.Save(folderName);
             }
         }
 
@@ -97,7 +104,7 @@ namespace ZAP
                 fileIndex += res.GetRawData().Length;
             }
 
-            File.WriteAllBytes("build.bin", file);
+            File.WriteAllBytes(name + ".test", file);
         }
     }
 }

@@ -41,12 +41,12 @@ namespace ZAP
         }
 
         // BUILD MODE
-        public ZTexture(ref XmlReader reader)
+        public ZTexture(ref XmlReader reader, string inFolder)
         {
             ParseXML(ref reader);
 
             // Get Raw Data
-            PrepareRawData();
+            PrepareRawData(inFolder);
         }
 
         public ZTexture(TextureType nType, byte[] nRawData, string nName, int nWidth, int nHeight)
@@ -231,25 +231,25 @@ namespace ZAP
             }
         }
 
-        private void PrepareRawData()
+        private void PrepareRawData(string inFolder)
         {
             rawData = new byte[GetRawDataSize()];
 
             switch (type)
             {
-                case TextureType.RGBA32bpp: PrepareRawDataRGBA32(); break;
-                case TextureType.Grayscale8bpp: PrepareRawDataGrayscale8(); break;
-                case TextureType.GrayscaleAlpha8bpp: PrepareRawDataGrayscaleAlpha8(); break;
-                case TextureType.Grayscale4bpp: PrepareRawDataGrayscale4(); break;
-                case TextureType.GrayscaleAlpha4bpp: PrepareRawDataGrayscaleAlpha4(); break;
+                case TextureType.RGBA32bpp: PrepareRawDataRGBA32(inFolder); break;
+                case TextureType.Grayscale8bpp: PrepareRawDataGrayscale8(inFolder); break;
+                case TextureType.GrayscaleAlpha8bpp: PrepareRawDataGrayscaleAlpha8(inFolder); break;
+                case TextureType.Grayscale4bpp: PrepareRawDataGrayscale4(inFolder); break;
+                case TextureType.GrayscaleAlpha4bpp: PrepareRawDataGrayscaleAlpha4(inFolder); break;
                 default: throw new Exception(String.Format("Build Mode: Format {0} is not supported!", type.ToString()));
             }
         }
 
-        private void PrepareRawDataRGBA32()
+        private void PrepareRawDataRGBA32(string inFolder)
         {
-            bmpRgb = new Bitmap("out\\" + name + ".rgb.png");
-            bmpAlpha = new Bitmap("out\\" + name + ".a.png");
+            bmpRgb = new Bitmap(inFolder + "/" + name + ".rgb.png");
+            bmpAlpha = new Bitmap(inFolder + "/" + name + ".a.png");
 
             for (int y = 0; y < height; y++)
             {
@@ -267,9 +267,9 @@ namespace ZAP
             }
         }
 
-        private void PrepareRawDataGrayscale8()
+        private void PrepareRawDataGrayscale8(string inFolder)
         {
-            bmpRgb = new Bitmap("out\\" + name + ".gray.png");
+            bmpRgb = new Bitmap(inFolder + "/" + name + ".gray.png");
 
             for (int y = 0; y < height; y++)
             {
@@ -283,10 +283,10 @@ namespace ZAP
             }
         }
 
-        private void PrepareRawDataGrayscaleAlpha8()
+        private void PrepareRawDataGrayscaleAlpha8(string inFolder)
         {
-            bmpRgb = new Bitmap("out\\" + name + ".gray.png");
-            bmpAlpha = new Bitmap("out\\" + name + ".a.png");
+            bmpRgb = new Bitmap(inFolder + "/" + name + ".gray.png");
+            bmpAlpha = new Bitmap(inFolder + "/" + name + ".a.png");
 
             for (int y = 0; y < height; y++)
             {
@@ -301,9 +301,9 @@ namespace ZAP
             }
         }
 
-        private void PrepareRawDataGrayscale4()
+        private void PrepareRawDataGrayscale4(string inFolder)
         {
-            bmpRgb = new Bitmap("out\\" + name + ".gray.png");
+            bmpRgb = new Bitmap(inFolder + "/" + name + ".gray.png");
 
             for (int y = 0; y < height; y++)
             {
@@ -318,10 +318,10 @@ namespace ZAP
             }
         }
 
-        private void PrepareRawDataGrayscaleAlpha4()
+        private void PrepareRawDataGrayscaleAlpha4(string inFolder)
         {
-            bmpRgb = new Bitmap("out\\" + name + ".gray.png");
-            bmpAlpha = new Bitmap("out\\" + name + ".a.png");
+            bmpRgb = new Bitmap(inFolder + "/" + name + ".gray.png");
+            bmpAlpha = new Bitmap(inFolder + "/" + name + ".a.png");
 
             for (int y = 0; y < height; y++)
             {
@@ -371,21 +371,21 @@ namespace ZAP
             return (int)(width * height * GetPixelMultiplyer());
         }
 
-        public override void Save()
+        public override void Save(string outFolder)
         {
             if (type == TextureType.RGBA32bpp)
             {
-                bmpRgb.Save("out\\" + name + ".rgb.png");
-                bmpAlpha.Save("out\\" + name + ".a.png");
+                bmpRgb.Save(outFolder + "/" + name + ".rgb.png");
+                bmpAlpha.Save(outFolder + "/" + name + ".a.png");
             }
             else if (type == TextureType.Grayscale8bpp || type == TextureType.Grayscale4bpp)
             {
-                bmpRgb.Save("out\\" + name + ".gray.png");
+                bmpRgb.Save(outFolder + "/" + name + ".gray.png");
             }
             else if (type == TextureType.GrayscaleAlpha8bpp || type == TextureType.GrayscaleAlpha4bpp)
             {
-                bmpRgb.Save("out\\" + name + ".gray.png");
-                bmpAlpha.Save("out\\" + name + ".a.png");
+                bmpRgb.Save(outFolder + "/" + name + ".gray.png");
+                bmpAlpha.Save(outFolder + "/" + name + ".a.png");
             }
         }
     }

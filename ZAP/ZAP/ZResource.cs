@@ -11,7 +11,7 @@ namespace ZAP
         protected string name;
         protected byte[] rawData;
 
-        public virtual void Save()
+        public virtual void Save(string outFolder)
         {
 
         }
