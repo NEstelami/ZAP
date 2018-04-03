@@ -31,6 +31,7 @@ namespace ZAP
         byte[] rawData;
         Bitmap bmpRgb, bmpAlpha, bmpPalette;
 
+        // EXTRACT MODE
         public ZTexture(ref XmlReader reader, byte[] nRawData, int rawDataIndex)
         {
             ParseXML(ref reader);
@@ -41,9 +42,23 @@ namespace ZAP
             PrepareBitmap();
         }
 
+        // BUILD MODE
+        public ZTexture(ref XmlReader reader)
+        {
+            ParseXML(ref reader);
+
+            // Get Raw Data
+            PrepareRawData();
+        }
+
         public ZTexture(TextureType nType, byte[] nRawData, string nName, int nWidth, int nHeight)
         {
             FixRawData();
+        }
+
+        public string GetName()
+        {
+            return name;
         }
 
         void ParseXML(ref XmlReader reader)
@@ -85,93 +100,186 @@ namespace ZAP
 
             if (type == TextureType.RGBA32bpp)
             {
-                for (int y = 0; y < height; y++)
-                {
-                    for (int x = 0; x < width; x++)
-                    {
-                        int pos = ((y * width) + x) * 4;
-                        Color c = Color.FromArgb(255, rawData[pos + 2], rawData[pos + 1], rawData[pos + 0]);
-                        Color a = Color.FromArgb(255, rawData[pos + 3], rawData[pos + 3], rawData[pos + 3]);
-                        bmpRgb.SetPixel(x, y, c);
-                        bmpAlpha.SetPixel(x, y, a);
-                    }
-                }
+                PrepareBitmapRGBA32();
             }
             else if (type == TextureType.Grayscale8bpp)
             {
-                for (int y = 0; y < height; y++)
-                {
-                    for (int x = 0; x < width; x++)
-                    {
-                        int pos = ((y * width) + x) * 1;
-                        Color c = Color.FromArgb(255, rawData[pos], rawData[pos], rawData[pos]);
-                        bmpRgb.SetPixel(x, y, c);
-                    }
-                }
+                PrepareBitmapGrayscale8();
             }
             else if (type == TextureType.GrayscaleAlpha8bpp)
             {
-                for (int y = 0; y < height; y++)
-                {
-                    for (int x = 0; x < width; x++)
-                    {
-                        int pos = ((y * width) + x) * 1;
-                        byte grayscale = (byte)(rawData[pos] & 0xF0);
-                        byte alpha = (byte)( (rawData[pos] & 0x0F) << 4);
-                        Color c = Color.FromArgb(255, grayscale, grayscale, grayscale);
-                        Color a = Color.FromArgb(255, alpha, alpha, alpha);
-                        bmpRgb.SetPixel(x, y, c);
-                        bmpAlpha.SetPixel(x, y, a);
-                    }
-                }
+                PrepareBitmapGrayscaleAlpha8();
             }
             else if (type == TextureType.Grayscale4bpp)
             {
-                for (int y = 0; y < height; y++)
-                {
-                    for (int x = 0; x < width; x += 2)
-                    {
-                        for (int i = 0; i < 2; i++)
-                        {
-                            int pos = ((y * width) + x) / 2;
-                            byte grayscale = 0;
-
-                            if (i == 0)
-                                grayscale = (byte)(rawData[pos] & 0xF0);
-                            else
-                                grayscale = (byte)((rawData[pos] & 0x0F) << 4);
-
-                            Color c = Color.FromArgb(255, grayscale, grayscale, grayscale);
-                            bmpRgb.SetPixel(x+i, y, c);
-                        }
-                    }
-                }
+                PrepareBitmapGrayscale4();
             }
             else if (type == TextureType.GrayscaleAlpha4bpp)
             {
-                for (int y = 0; y < height; y++)
+                PrepareBitmapGrayscaleAlpha4();
+            }
+        }
+
+        private void PrepareBitmapRGBA32()
+        {
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
                 {
-                    for (int x = 0; x < width; x += 2)
+                    int pos = ((y * width) + x) * 4;
+                    Color c = Color.FromArgb(255, rawData[pos + 2], rawData[pos + 1], rawData[pos + 0]);
+                    Color a = Color.FromArgb(255, rawData[pos + 3], rawData[pos + 3], rawData[pos + 3]);
+                    bmpRgb.SetPixel(x, y, c);
+                    bmpAlpha.SetPixel(x, y, a);
+                }
+            }
+        }
+
+        private void PrepareBitmapGrayscale8()
+        {
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int pos = ((y * width) + x) * 1;
+                    Color c = Color.FromArgb(255, rawData[pos], rawData[pos], rawData[pos]);
+                    bmpRgb.SetPixel(x, y, c);
+                }
+            }
+        }
+
+        private void PrepareBitmapGrayscaleAlpha8()
+        {
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int pos = ((y * width) + x) * 1;
+                    byte grayscale = (byte)(rawData[pos] & 0xF0);
+                    byte alpha = (byte)((rawData[pos] & 0x0F) << 4);
+                    Color c = Color.FromArgb(255, grayscale, grayscale, grayscale);
+                    Color a = Color.FromArgb(255, alpha, alpha, alpha);
+                    bmpRgb.SetPixel(x, y, c);
+                    bmpAlpha.SetPixel(x, y, a);
+                }
+            }
+        }
+
+        private void PrepareBitmapGrayscale4()
+        {
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x += 2)
+                {
+                    for (int i = 0; i < 2; i++)
                     {
-                        for (int i = 0; i < 2; i++)
-                        {
-                            int pos = ((y * width) + x) / 2;
-                            byte data = 0;
+                        int pos = ((y * width) + x) / 2;
+                        byte grayscale = 0;
 
-                            if (i == 0)
-                                data = (byte)((rawData[pos] & 0xF0) >> 4);
-                            else
-                                data = (byte)(rawData[pos] & 0x0F);
+                        if (i == 0)
+                            grayscale = (byte)(rawData[pos] & 0xF0);
+                        else
+                            grayscale = (byte)((rawData[pos] & 0x0F) << 4);
 
-                            byte grayscale = (byte)((data & 0x0E) >> 1);
-                            byte alpha = (byte)((data & 0x01) * 255);
-
-                            Color c = Color.FromArgb(255, grayscale, grayscale, grayscale);
-                            Color a = Color.FromArgb(255, alpha, alpha, alpha);
-                            bmpRgb.SetPixel(x + i, y, c);
-                            bmpAlpha.SetPixel(x + i, y, a);
-                        }
+                        Color c = Color.FromArgb(255, grayscale, grayscale, grayscale);
+                        bmpRgb.SetPixel(x + i, y, c);
                     }
+                }
+            }
+        }
+
+        private void PrepareBitmapGrayscaleAlpha4()
+        {
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x += 2)
+                {
+                    for (int i = 0; i < 2; i++)
+                    {
+                        int pos = ((y * width) + x) / 2;
+                        byte data = 0;
+
+                        if (i == 0)
+                            data = (byte)((rawData[pos] & 0xF0) >> 4);
+                        else
+                            data = (byte)(rawData[pos] & 0x0F);
+
+                        byte grayscale = (byte)((data & 0x0E) >> 1);
+                        byte alpha = (byte)((data & 0x01) * 255);
+
+                        Color c = Color.FromArgb(255, grayscale, grayscale, grayscale);
+                        Color a = Color.FromArgb(255, alpha, alpha, alpha);
+                        bmpRgb.SetPixel(x + i, y, c);
+                        bmpAlpha.SetPixel(x + i, y, a);
+                    }
+                }
+            }
+        }
+
+        private void PrepareRawData()
+        {
+            rawData = new byte[GetRawDataSize()];
+
+            switch (type)
+            {
+                case TextureType.RGBA32bpp: PrepareRawDataRGBA32(); break;
+                case TextureType.Grayscale8bpp: PrepareRawDataGrayscale8(); break;
+                case TextureType.GrayscaleAlpha8bpp: PrepareRawDataGrayscaleAlpha8(); break;
+                default: throw new Exception(String.Format("Build Mode: Format {0} is not supported!", type.ToString()));
+            }
+        }
+
+        private void PrepareRawDataRGBA32()
+        {
+            bmpRgb = new Bitmap("out\\" + name + ".rgb.png");
+            bmpAlpha = new Bitmap("out\\" + name + ".a.png");
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int pos = ((y * width) + x) * 4;
+                    Color c = bmpRgb.GetPixel(x, y);
+                    Color a = bmpAlpha.GetPixel(x, y);
+
+                    rawData[pos + 0] = c.R;
+                    rawData[pos + 1] = c.G;
+                    rawData[pos + 2] = c.B;
+                    rawData[pos + 3] = a.R;
+                }
+            }
+        }
+
+        private void PrepareRawDataGrayscale8()
+        {
+            bmpRgb = new Bitmap("out\\" + name + ".gray.png");
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int pos = ((y * width) + x);
+                    Color c = bmpRgb.GetPixel(x, y);
+                    
+                    rawData[pos] = c.R;
+                }
+            }
+        }
+
+        private void PrepareRawDataGrayscaleAlpha8()
+        {
+            bmpRgb = new Bitmap("out\\" + name + ".gray.png");
+            bmpAlpha = new Bitmap("out\\" + name + ".a.png");
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int pos = (y * width) + x;
+                    Color c = bmpRgb.GetPixel(x, y);
+                    Color a = bmpAlpha.GetPixel(x, y);
+
+                    rawData[pos] = (byte)(((c.R / 16) << 4) + (a.R / 16));
                 }
             }
         }

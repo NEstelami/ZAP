@@ -8,23 +8,33 @@ using System.Xml;
 
 namespace ZAP
 {
+    public enum ZFileMode
+    {
+        Build,
+        Extract,
+    };
+
     public class ZFile
     {
         string name;
         List<ZTexture> resources;
         
-        public ZFile(ref XmlReader reader)
+        public ZFile(ZFileMode mode, ref XmlReader reader)
         {
             resources = new List<ZTexture>();
-            ParseXML(ref reader);
+            ParseXML(mode, ref reader);
         }
 
-        void ParseXML(ref XmlReader reader)
+        void ParseXML(ZFileMode mode, ref XmlReader reader)
         {
             int startDepth = reader.Depth;
             name = reader.GetAttribute("Name");
 
-            byte[] rawData = File.ReadAllBytes(name);
+            byte[] rawData = null;
+
+            if (mode == ZFileMode.Extract)
+                rawData = File.ReadAllBytes(name);
+
             int rawDataIndex = 0;
 
             reader.Read();
@@ -33,7 +43,13 @@ namespace ZAP
             {
                 if (reader.Name == "Texture")
                 {
-                    ZTexture tex = new ZTexture(ref reader, rawData, rawDataIndex);
+                    ZTexture tex = null;
+
+                    if (mode == ZFileMode.Extract)
+                        tex = new ZTexture(ref reader, rawData, rawDataIndex);
+                    else
+                        tex = new ZTexture(ref reader);
+
                     resources.Add(tex);
                     rawDataIndex += tex.GetRawDataSize();
                 }
@@ -45,7 +61,10 @@ namespace ZAP
         public void ExtractResources()
         {
             foreach (ZTexture res in resources)
+            {
+                Console.WriteLine("Saving resource " + res.GetName());
                 res.Save();
+            }
         }
     }
 }

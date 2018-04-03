@@ -19,6 +19,9 @@ namespace ZAP
 
         static void Test()
         {
+            if (!Directory.Exists("out"))
+                Directory.CreateDirectory("out");
+
             XmlReader reader = XmlReader.Create("icon_item_static.xml");
 
             while (!reader.EOF)
@@ -27,12 +30,12 @@ namespace ZAP
 
                 if (reader.Name == "File")
                 {
-                    ZFile file = new ZFile(ref reader);
+                    ZFile file = new ZFile(ZFileMode.Extract, ref reader);
 
                     file.ExtractResources();
                 }
 
-                Console.WriteLine(reader.Name);
+                //Console.WriteLine(reader.Name);
             }
         }
 
