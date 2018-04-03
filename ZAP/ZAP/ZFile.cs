@@ -17,11 +17,11 @@ namespace ZAP
     public class ZFile
     {
         string name;
-        List<ZTexture> resources;
+        List<ZResource> resources;
         
         public ZFile(ZFileMode mode, ref XmlReader reader)
         {
-            resources = new List<ZTexture>();
+            resources = new List<ZResource>();
             ParseXML(mode, ref reader);
         }
 
@@ -53,6 +53,19 @@ namespace ZAP
                     resources.Add(tex);
                     rawDataIndex += tex.GetRawDataSize();
                 }
+                else if (reader.Name == "Blob")
+                {
+                    ZBlob blob = null;
+
+                    if (mode == ZFileMode.Extract)
+                        blob = new ZBlob(ref reader, rawData, rawDataIndex);
+                    else
+                        blob = new ZBlob(ref reader);
+
+                    resources.Add(blob);
+
+                    rawDataIndex += blob.GetRawDataSize();
+                }
 
                 reader.Read();
             }
@@ -60,7 +73,7 @@ namespace ZAP
 
         public void ExtractResources()
         {
-            foreach (ZTexture res in resources)
+            foreach (ZResource res in resources)
             {
                 Console.WriteLine("Saving resource " + res.GetName());
                 res.Save();
@@ -71,13 +84,13 @@ namespace ZAP
         {
             int size = 0;
 
-            foreach (ZTexture res in resources)
+            foreach (ZResource res in resources)
                 size += res.GetRawDataSize();
 
             byte[] file = new byte[size];
             int fileIndex = 0;
 
-            foreach (ZTexture res in resources)
+            foreach (ZResource res in resources)
             {
                 Console.WriteLine("Building resource " + res.GetName());
                 Array.Copy(res.GetRawData(), 0, file, fileIndex, res.GetRawData().Length);

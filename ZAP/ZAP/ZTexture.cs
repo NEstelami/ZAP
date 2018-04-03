@@ -23,12 +23,10 @@ namespace ZAP
         GrayscaleAlpha16bpp
     };
 
-    public class ZTexture
+    public class ZTexture : ZResource
     {
         TextureType type;
-        string name;
         int width, height;
-        byte[] rawData;
         Bitmap bmpRgb, bmpAlpha, bmpPalette;
 
         // EXTRACT MODE
@@ -54,11 +52,6 @@ namespace ZAP
         public ZTexture(TextureType nType, byte[] nRawData, string nName, int nWidth, int nHeight)
         {
             FixRawData();
-        }
-
-        public string GetName()
-        {
-            return name;
         }
 
         void ParseXML(ref XmlReader reader)
@@ -355,11 +348,6 @@ namespace ZAP
             }
         }
 
-        public int GetRawDataSize()
-        {
-            return (int)(width * height * GetPixelMultiplyer());
-        }
-
         float GetPixelMultiplyer()
         {
             switch (type)
@@ -373,12 +361,17 @@ namespace ZAP
             return -1;
         }
 
-        public byte[] GetRawData()
+        public override byte[] GetRawData()
         {
             return rawData;
         }
 
-        public void Save()
+        public override int GetRawDataSize()
+        {
+            return (int)(width * height * GetPixelMultiplyer());
+        }
+
+        public override void Save()
         {
             if (type == TextureType.RGBA32bpp)
             {

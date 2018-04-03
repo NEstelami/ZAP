@@ -58,9 +58,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ZBlob.cs" />
     <Compile Include="ZFile.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ZResource.cs" />
     <Compile Include="ZTexture.cs" />
   </ItemGroup>
   <ItemGroup>
