@@ -1,0 +1,51 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+using System.Xml;
+
+namespace ZAP
+{
+    public class ZFile
+    {
+        string name;
+        List<ZTexture> resources;
+        
+        public ZFile(ref XmlReader reader)
+        {
+            resources = new List<ZTexture>();
+            ParseXML(ref reader);
+        }
+
+        void ParseXML(ref XmlReader reader)
+        {
+            int startDepth = reader.Depth;
+            name = reader.GetAttribute("Name");
+
+            byte[] rawData = File.ReadAllBytes(name);
+            int rawDataIndex = 0;
+
+            reader.Read();
+
+            while (reader.Depth > startDepth)
+            {
+                if (reader.Name == "Texture")
+                {
+                    ZTexture tex = new ZTexture(ref reader, rawData, rawDataIndex);
+                    resources.Add(tex);
+                    rawDataIndex += tex.GetRawDataSize();
+                }
+
+                reader.Read();
+            }
+        }
+
+        public void ExtractResources()
+        {
+            foreach (ZTexture res in resources)
+                res.Save();
+        }
+    }
+}
