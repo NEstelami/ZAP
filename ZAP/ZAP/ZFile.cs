@@ -94,6 +94,10 @@ namespace ZAP
             foreach (ZResource res in resources)
                 size += res.GetRawDataSize();
 
+            // Make sure size is 16 byte aligned
+            if (size % 16 != 0)
+                size = ((size / 16) + 1) * 16;
+
             byte[] file = new byte[size];
             int fileIndex = 0;
 

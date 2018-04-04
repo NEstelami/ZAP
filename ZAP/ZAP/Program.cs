@@ -20,7 +20,7 @@ namespace ZAP
 
         static void Test(ZFileMode fileMode)
         {
-            XmlReader reader = XmlReader.Create("icon_item_static.xml");
+            XmlReader reader = XmlReader.Create("textures.xml");
 
             while (!reader.EOF)
             {
