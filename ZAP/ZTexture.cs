@@ -110,22 +110,7 @@ namespace ZAP
             }
             else if (type == TextureType.RGBA16bpp)
             {
-                for (int y = 0; y < height; y++)
-                {
-                    for (int x = 0; x < width; x++)
-                    {
-                        int pos = ((y * width) + x) * 2;
-                        short data = (short)((rawData[pos + 1] << 8) + rawData[pos]);
-                        byte r = (byte)((data & 0xF800) >> 11);
-                        byte g = (byte)((data & 0x07C0) >> 6);
-                        byte b = (byte)((data & 0x003E) >> 1);
-                        byte alpha = (byte)(data & 0x01);
-                        Color c = Color.FromArgb(255, r * 8, g * 8, b * 8);
-                        Color a = Color.FromArgb(255, alpha * 255, alpha * 255, alpha * 255);
-                        bmpRgb.SetPixel(x, y, c);
-                        bmpAlpha.SetPixel(x, y, a);
-                    }
-                }
+                PrepareBitmapRGBA16();
             }
             else if (type == TextureType.Grayscale8bpp)
             {
@@ -154,6 +139,26 @@ namespace ZAP
             else if (type == TextureType.Palette8bpp)
             {
                 PrepareBitmapPalette8();
+            }
+        }
+
+        private void PrepareBitmapRGBA16()
+        {
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int pos = ((y * width) + x) * 2;
+                    short data = (short)((rawData[pos + 1] << 8) + rawData[pos]);
+                    byte r = (byte)((data & 0xF800) >> 11);
+                    byte g = (byte)((data & 0x07C0) >> 6);
+                    byte b = (byte)((data & 0x003E) >> 1);
+                    byte alpha = (byte)(data & 0x01);
+                    Color c = Color.FromArgb(255, r * 8, g * 8, b * 8);
+                    Color a = Color.FromArgb(255, alpha * 255, alpha * 255, alpha * 255);
+                    bmpRgb.SetPixel(x, y, c);
+                    bmpAlpha.SetPixel(x, y, a);
+                }
             }
         }
 
@@ -551,23 +556,7 @@ namespace ZAP
             }
             else if (type == TextureType.Palette8bpp)
             {
-            //    // HACK TEST THING
-
-            //    Bitmap pal = new Bitmap(outFolder + "/World_Map_Palette.rgb.png");
-
-            //    for (int y = 0; y < bmpRgb.Height; y++)
-            //    {
-            //        for (int x = 0; x < bmpRgb.Width; x++)
-            //        {
-            //            byte ind = bmpRgb.GetPixel(x, y).R;
-
-            //            Color p = pal.GetPixel(ind % 16, ind / 16);
-            //            bmpRgb.SetPixel(x, y, Color.FromArgb(1, p.R, p.G, p.B));
-            //        }
-            //    }
-
                 bmpRgb.Save(outFolder + "/" + name + ".ci8.png");
-
             }
         }
     }

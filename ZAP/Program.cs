@@ -24,9 +24,9 @@ namespace ZAP
                 string mode = args[1];
 
                 if (mode == "b")
-                    Test(inputXml, ZFileMode.Build);
+                    ParseFile(inputXml, ZFileMode.Build);
                 else if (mode == "e")
-                    Test(inputXml, ZFileMode.Extract);
+                    ParseFile(inputXml, ZFileMode.Extract);
                 else
                     PrintUsage();
             }
@@ -42,7 +42,7 @@ namespace ZAP
             Console.WriteLine("Usage: ZAP [input xml file] [mode (b/e)]");
         }
 
-        static void Test(string xmlFilePath, ZFileMode fileMode)
+        static void ParseFile(string xmlFilePath, ZFileMode fileMode)
         {
             XmlReader reader = XmlReader.Create(xmlFilePath);
 
@@ -62,16 +62,6 @@ namespace ZAP
 
                 //Console.WriteLine(reader.Name);
             }
-        }
-
-        static void Extract(string xmlPath)
-        {
-
-        }
-
-        static void Build(string xmlPath)
-        {
-
         }
     }
 }
