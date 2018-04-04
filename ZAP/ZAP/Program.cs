@@ -12,15 +12,39 @@ namespace ZAP
 {
     class Program
     {
+        // Usage: ZAP.exe [input xml] [mode (b/e)]
         static void Main(string[] args)
         {
-            Test(ZFileMode.Extract);
-            Test(ZFileMode.Build);
+            //Test(ZFileMode.Extract);
+            //Test(ZFileMode.Build);
+
+            if (args.Length == 2)
+            {
+                string inputXml = args[0];
+                string mode = args[1];
+
+                if (mode == "b")
+                    Test(inputXml, ZFileMode.Build);
+                else if (mode == "e")
+                    Test(inputXml, ZFileMode.Extract);
+                else
+                    PrintUsage();
+            }
+            else
+            {
+                PrintUsage();
+            }
         }
 
-        static void Test(ZFileMode fileMode)
+        static void PrintUsage()
         {
-            XmlReader reader = XmlReader.Create("textures.xml");
+            Console.WriteLine("ZAP: Zelda Asset Processor");
+            Console.WriteLine("Usage: ZAP [input xml file] [mode (b/e)]");
+        }
+
+        static void Test(string xmlFilePath, ZFileMode fileMode)
+        {
+            XmlReader reader = XmlReader.Create(xmlFilePath);
 
             while (!reader.EOF)
             {
@@ -28,7 +52,7 @@ namespace ZAP
 
                 if (reader.Name == "File")
                 {
-                    ZFile file = new ZFile(fileMode, ref reader);
+                    ZFile file = new ZFile(fileMode, ref reader, Path.GetDirectoryName(xmlFilePath).Replace("\\", "/"));
 
                     if (fileMode == ZFileMode.Extract)
                         file.ExtractResources();

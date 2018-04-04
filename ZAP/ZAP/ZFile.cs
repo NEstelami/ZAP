@@ -17,11 +17,13 @@ namespace ZAP
     public class ZFile
     {
         string name;
+        string basePath;
         List<ZResource> resources;
         
-        public ZFile(ZFileMode mode, ref XmlReader reader)
+        public ZFile(ZFileMode mode, ref XmlReader reader, string nBasePath)
         {
             resources = new List<ZResource>();
+            basePath = nBasePath;
             ParseXML(mode, ref reader);
         }
 
@@ -30,7 +32,7 @@ namespace ZAP
             int startDepth = reader.Depth;
             name = reader.GetAttribute("Name");
 
-            string folderName = Path.GetFileNameWithoutExtension(name);
+            string folderName = basePath + "/" + Path.GetFileNameWithoutExtension(name);
 
             byte[] rawData = null;
 
@@ -82,13 +84,15 @@ namespace ZAP
 
             foreach (ZResource res in resources)
             {
-                Console.WriteLine("Saving resource " + res.GetName());
+                //Console.WriteLine("Saving resource " + res.GetName());
                 res.Save(folderName);
             }
         }
 
         public void BuildResources()
         {
+            Console.WriteLine("Building resource " + name);
+
             int size = 0;
 
             foreach (ZResource res in resources)
@@ -103,12 +107,12 @@ namespace ZAP
 
             foreach (ZResource res in resources)
             {
-                Console.WriteLine("Building resource " + res.GetName());
+                //Console.WriteLine("Building resource " + res.GetName());
                 Array.Copy(res.GetRawData(), 0, file, fileIndex, res.GetRawData().Length);
                 fileIndex += res.GetRawData().Length;
             }
 
-            File.WriteAllBytes(name + ".test", file);
+            File.WriteAllBytes(basePath + "/" + name, file);
         }
     }
 }
