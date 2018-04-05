@@ -23,7 +23,12 @@ namespace ZAP
         public ZFile(ZFileMode mode, ref XmlReader reader, string nBasePath)
         {
             resources = new List<ZResource>();
-            basePath = nBasePath;
+
+            if (nBasePath == "")
+                basePath = Directory.GetCurrentDirectory();
+            else
+                basePath = nBasePath;
+
             ParseXML(mode, ref reader);
         }
 

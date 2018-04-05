@@ -94,7 +94,7 @@ namespace ZAP
                 {
                     byte tmp = rawData[i];
                     rawData[i] = rawData[i + 1];
-                    rawData[i] = tmp;
+                    rawData[i+1] = tmp;
                 }
             }
         }
@@ -105,41 +105,23 @@ namespace ZAP
             bmpAlpha = new Bitmap(width, height, PixelFormat.Format24bppRgb);
 
             if (type == TextureType.RGBA32bpp)
-            {
                 PrepareBitmapRGBA32();
-            }
             else if (type == TextureType.RGBA16bpp)
-            {
                 PrepareBitmapRGBA16();
-            }
             else if (type == TextureType.Grayscale8bpp)
-            {
                 PrepareBitmapGrayscale8();
-            }
             else if (type == TextureType.GrayscaleAlpha8bpp)
-            {
                 PrepareBitmapGrayscaleAlpha8();
-            }
             else if (type == TextureType.Grayscale4bpp)
-            {
                 PrepareBitmapGrayscale4();
-            }
             else if (type == TextureType.GrayscaleAlpha4bpp)
-            {
                 PrepareBitmapGrayscaleAlpha4();
-            }
             else if (type == TextureType.GrayscaleAlpha16bpp)
-            {
                 PrepareBitmapGrayscaleAlpha16();
-            }
             else if (type == TextureType.Palette4bpp)
-            {
                 PrepareBitmapPalette4();
-            }
             else if (type == TextureType.Palette8bpp)
-            {
                 PrepareBitmapPalette8();
-            }
         }
 
         private void PrepareBitmapRGBA16()
@@ -372,8 +354,8 @@ namespace ZAP
 
                     short data = (short)((r << 11) + (g << 6) + (b << 1) + alphaBit);
 
-                    rawData[pos + 0] = (byte)(data & 0x00FF);
-                    rawData[pos + 1] = (byte)( (data & 0xFF00) >> 8);
+                    rawData[pos + 0] = (byte)((data & 0xFF00) >> 8);
+                    rawData[pos + 1] = (byte)((data & 0x00FF));
                 }
             }
         }
