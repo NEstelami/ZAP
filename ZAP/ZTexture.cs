@@ -104,24 +104,18 @@ namespace ZAP
             bmpRgb = new Bitmap(width, height, PixelFormat.Format24bppRgb);
             bmpAlpha = new Bitmap(width, height, PixelFormat.Format24bppRgb);
 
-            if (type == TextureType.RGBA32bpp)
-                PrepareBitmapRGBA32();
-            else if (type == TextureType.RGBA16bpp)
-                PrepareBitmapRGBA16();
-            else if (type == TextureType.Grayscale8bpp)
-                PrepareBitmapGrayscale8();
-            else if (type == TextureType.GrayscaleAlpha8bpp)
-                PrepareBitmapGrayscaleAlpha8();
-            else if (type == TextureType.Grayscale4bpp)
-                PrepareBitmapGrayscale4();
-            else if (type == TextureType.GrayscaleAlpha4bpp)
-                PrepareBitmapGrayscaleAlpha4();
-            else if (type == TextureType.GrayscaleAlpha16bpp)
-                PrepareBitmapGrayscaleAlpha16();
-            else if (type == TextureType.Palette4bpp)
-                PrepareBitmapPalette4();
-            else if (type == TextureType.Palette8bpp)
-                PrepareBitmapPalette8();
+            switch (type)
+            {
+                case TextureType.RGBA16bpp: PrepareBitmapRGBA16(); break;
+                case TextureType.RGBA32bpp: PrepareBitmapRGBA32(); break;
+                case TextureType.Grayscale4bpp: PrepareBitmapGrayscale4(); break;
+                case TextureType.Grayscale8bpp: PrepareBitmapGrayscale8(); break;
+                case TextureType.GrayscaleAlpha4bpp: PrepareBitmapGrayscaleAlpha4(); break;
+                case TextureType.GrayscaleAlpha8bpp: PrepareBitmapGrayscaleAlpha8(); break;
+                case TextureType.GrayscaleAlpha16bpp: PrepareBitmapGrayscaleAlpha16(); break;
+                case TextureType.Palette4bpp: PrepareBitmapPalette4(); break;
+                case TextureType.Palette8bpp: PrepareBitmapPalette8(); break;
+            }
         }
 
         private void PrepareBitmapRGBA16()
